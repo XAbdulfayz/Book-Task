@@ -12,12 +12,12 @@ import com.library.booktask.mapper.book.BookMapper;
 import com.library.booktask.repository.BookRepository;
 import com.library.booktask.service.AbstractService;
 import com.library.booktask.service.GenericService;
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.lang.invoke.MethodHandles;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class BookService extends AbstractService<BookMapper, BookRepository> implements GenericService<BookCreateDto, BookUpdateDto, BookGetDto, UUID> {
@@ -108,7 +108,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     *  Входной параметр: “а”
     *  Результат: [{L. Tolstoy, 7},{F. Dostoevsky, 4},{N. Gogol, 1}]
     * */
-    public List<Task4Dto> getTask4Service() {
+    public List<Task4Dto> getTask4Service(Character ch) {
         List<AuthorDto> authorBooks = groupByAuthor();
         List<Task4Dto> response = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
             int count = 0;
             for (BookGetDto book : authorBook.getBooks()) {
                 for (int i = 0; i < book.getTitle().length(); i++) {
-                    if (book.getTitle().charAt(i) == 'A' || book.getTitle().charAt(i) == 'a') {
+                    if (book.getTitle().toLowerCase(Locale.ROOT).charAt(i) == ch || book.getTitle().toUpperCase(Locale.ROOT).charAt(i) == ch) {
                         count++;
                     }
                 }
@@ -129,7 +129,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
             }
         }
 
-        return response;
+        return response.stream().sorted( (o1, o2) -> -o1.getNumber().compareTo(o2.getNumber())).collect(Collectors.toList());
 
     }
 

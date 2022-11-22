@@ -79,9 +79,9 @@ public class BookController extends AbstractController <BookService> {
      *  Входной параметр: “а”
      *  Результат: [{L. Tolstoy, 7},{F. Dostoevsky, 4},{N. Gogol, 1}]
      * */
-    @GetMapping("get/task4")
-    public ResponseEntity<Data<List<Task4Dto>>> getTask4(){
-        List<Task4Dto> response = service.getTask4Service();
+    @GetMapping("get/task4/{ch}")
+    public ResponseEntity<Data<List<Task4Dto>>> getTask4(@PathVariable Character ch){
+        List<Task4Dto> response = service.getTask4Service(ch);
         return new ResponseEntity<>(new Data<>(response), HttpStatus.OK);
     }
 
