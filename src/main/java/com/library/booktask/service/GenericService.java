@@ -10,18 +10,18 @@ import java.util.List;
  *    CD - Create Dto
  *    UD - Update Dto
  *    GD - Get Dto
- *    CODE - Data's code. UUID code
+ *    K - Data's id
  * */
-public interface GenericService<CD extends BaseDto, UD extends GenericDto, GD extends GenericDto, CODE extends Serializable> {
+public interface GenericService<CD extends BaseDto, UD extends GenericDto, GD extends GenericDto, K extends Serializable> {
 
     GD create(CD DTO);
 
     GD update(UD DTO);
 
-    GD getByCode(CODE code);
+    GD getByCode(K id);
 
     List<GD> getList();
 
-    Boolean delete(CODE code);
+    Boolean delete(K id);
 
 }

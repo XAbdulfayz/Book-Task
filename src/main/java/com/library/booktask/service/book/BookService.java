@@ -1,5 +1,6 @@
 package com.library.booktask.service.book;
 
+import com.library.booktask.dao.BookDaoImpl;
 import com.library.booktask.dto.authors.AuthorDto;
 import com.library.booktask.dto.authors.Task4Dto;
 import com.library.booktask.dto.book.BookCreateDto;
@@ -9,23 +10,23 @@ import com.library.booktask.entity.book.Book;
 import com.library.booktask.exception.NotFoundException;
 import com.library.booktask.exception.validator.BadRequestException;
 import com.library.booktask.mapper.book.BookMapper;
-import com.library.booktask.repository.BookRepository;
 import com.library.booktask.service.AbstractService;
 import com.library.booktask.service.GenericService;
-import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class BookService extends AbstractService<BookMapper, BookRepository> implements GenericService<BookCreateDto, BookUpdateDto, BookGetDto, UUID> {
+public class BookService extends AbstractService<BookMapper> implements GenericService<BookCreateDto, BookUpdateDto, BookGetDto, Long> {
 
-    public BookService(BookMapper mapper, BookRepository repository) {
-        super(mapper, repository);
+
+    public BookService(BookMapper mapper) {
+        super(mapper);
     }
-
 
     /*
     * Задача этого сервиса добавить новую книгу
@@ -36,7 +37,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     public BookGetDto create(BookCreateDto DTO) {
 
         Book book = mapper.fromCreateDTO(DTO);
-        Book response = repository.save(book);
+        Book response = BookDaoImpl.getInstance().save(book);
         if (Objects.isNull(response)) {
             throw new BadRequestException("Произошла ошибка записи в базу данных");
         }
@@ -48,8 +49,8 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     * Задача этого сервиса возвращает одну книгу по уникальному коду
     * */
     @Override
-    public BookGetDto getByCode(UUID uuid) {
-        Book response = repository.findByCode(uuid);
+    public BookGetDto getByCode(Long id) {
+        Book response = BookDaoImpl.getInstance().findById(id);
         if (Objects.isNull(response)) {
             throw new NotFoundException("книга не найдена");
         }
@@ -64,10 +65,9 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     * */
     @Override
     public List<BookGetDto> getList() {
-        List<Book> response = repository.getAllDesc();
+        List<Book> response = BookDaoImpl.getInstance().loadAllBookDescendingOrder();
         List<BookGetDto> bookGetDtos = mapper.toListDTO(response);
         return bookGetDtos;
-
     }
 
     /*
@@ -77,7 +77,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     *  книги(book.author)
     * */
     public List<AuthorDto> groupByAuthor() {
-        List<Book> allBooks = repository.findAll();
+        List<Book> allBooks = BookDaoImpl.getInstance().loadAllBookDescendingOrder();
         List<String> allAuthors = allBooks.stream().map(r -> r.getAuthor()).distinct().toList();
 
         List<AuthorDto> response = new ArrayList<>();
@@ -130,7 +130,6 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
         }
 
         return response.stream().sorted( (o1, o2) -> -o1.getNumber().compareTo(o2.getNumber())).collect(Collectors.toList());
-
     }
 
     @Override
@@ -139,7 +138,7 @@ public class BookService extends AbstractService<BookMapper, BookRepository> imp
     }
 
     @Override
-    public Boolean delete(UUID uuid) {
+    public Boolean delete(Long id) {
         return null;
     }
 }

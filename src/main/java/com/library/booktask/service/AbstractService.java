@@ -5,9 +5,8 @@ import com.library.booktask.repository.BaseRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract  class AbstractService<M extends BaseMapper, R extends BaseRepository> implements BaseService {
+public abstract  class AbstractService<M extends BaseMapper> implements BaseService {
 
     protected final M mapper;
-    protected final R repository;
 
 }

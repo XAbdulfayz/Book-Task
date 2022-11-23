@@ -10,5 +10,5 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenericDto implements BaseDto{
-    private UUID code;
+    private Long id;
 }

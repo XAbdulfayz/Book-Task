@@ -36,9 +36,9 @@ public class BookController extends AbstractController <BookService> {
     /*
      * Задача этого сервиса возвращает одну книгу по уникальному коду
      * */
-    @GetMapping("get/{code}")
-    public ResponseEntity<Data<BookGetDto>> getByCode(@PathVariable UUID code){
-        BookGetDto bookGetDto = service.getByCode(code);
+    @GetMapping("get/{id}")
+    public ResponseEntity<Data<BookGetDto>> getByCode(@PathVariable Long id){
+        BookGetDto bookGetDto = service.getByCode(id);
         return new ResponseEntity<>(new Data<>(bookGetDto), HttpStatus.OK);
     }
 
